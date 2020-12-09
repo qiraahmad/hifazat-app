@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "784536902514",
+    "project_id": "hifazat-78ecb",
+    "storage_bucket": "hifazat-78ecb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784536902514:android:c0e30604d75dcb92ae9beb",
+        "android_client_info": {
+          "package_name": "com.example.tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784536902514-sg144uv0jl3brsg7mdovqo7s6k2gr3k6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1_k4z4XZmCWFGFvE38oU4D10MN_-EpwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "784536902514-sg144uv0jl3brsg7mdovqo7s6k2gr3k6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
