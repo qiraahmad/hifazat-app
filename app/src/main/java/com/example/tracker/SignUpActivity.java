@@ -1,8 +1,5 @@
 package com.example.tracker;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +7,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,7 +33,7 @@ public class SignUpActivity extends AppCompatActivity {
         FAuth = FirebaseAuth.getInstance();
 
         if (FAuth.getCurrentUser() != null) {
-            startActivity(new Intent(SignUpActivity.this, MapsActivity.class));
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
             finish();
         }
         emailId = findViewById(R.id.editTextTextEmailAddress);
@@ -70,7 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 Toast.makeText(SignUpActivity.this, "Sign Up Unsuccessful, try again!", Toast.LENGTH_SHORT).show();
                             }
                             else {
-                                startActivity(new Intent(SignUpActivity.this, MapsActivity.class));
+                                startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                             }
                         }
                     });

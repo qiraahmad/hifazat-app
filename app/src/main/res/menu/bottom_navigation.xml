@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tab_map_item"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="Map" />
+    <item
+        android:id="@+id/tab_emergency_cont_item"
+        android:icon="@drawable/ic_emergency_com"
+        android:title="Emergency Contacts" />
+    <item
+        android:id="@+id/tab_directory_item"
+        android:icon="@drawable/ic_baseline_menu_book_24"
+        android:title="Search" />
+    <item
+        android:id="@+id/tab_sos_item"
+        android:icon="@drawable/ic_sos_vector"
+        android:title="SOS" />
+</menu>

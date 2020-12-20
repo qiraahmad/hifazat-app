@@ -1,8 +1,5 @@
 package com.example.tracker;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,9 +8,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -49,7 +46,7 @@ public class LogInActivity extends AppCompatActivity {
                 FirebaseUser mFireBaseUser = FAuth.getCurrentUser();
                 if (mFireBaseUser != null ) {
                     Toast.makeText(LogInActivity.this, "You are logged in!", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(LogInActivity.this, MapsActivity.class);
+                    Intent i = new Intent(LogInActivity.this, MainActivity.class);
                     startActivity(i);
                 }
 
@@ -80,7 +77,7 @@ public class LogInActivity extends AppCompatActivity {
                                 Toast.makeText(LogInActivity.this, "Sign In Unsuccessful, try again!", Toast.LENGTH_SHORT).show();
                             }
                             else {
-                                startActivity(new Intent(LogInActivity.this, MapsActivity.class));
+                                startActivity(new Intent(LogInActivity.this, MainActivity.class));
                             }
                         }
                     });
