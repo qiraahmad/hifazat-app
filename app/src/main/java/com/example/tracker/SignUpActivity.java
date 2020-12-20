@@ -31,6 +31,11 @@ public class SignUpActivity extends AppCompatActivity {
 
 
         FAuth = FirebaseAuth.getInstance();
+
+        if (FAuth.getCurrentUser() != null) {
+            startActivity(new Intent(SignUpActivity.this, MapsActivity.class));
+            finish();
+        }
         emailId = findViewById(R.id.editTextTextEmailAddress);
         password = findViewById(R.id.editTextTextPassword);
         mobile = findViewById(R.id.editTextPhone);
