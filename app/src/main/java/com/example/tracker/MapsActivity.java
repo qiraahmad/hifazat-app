@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,18 +18,14 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -159,12 +156,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     double loc = location.getLatitude();
                     double loc1 = location.getLongitude();
                     LatLng nloc = new LatLng(loc, loc1);
-
+                    String locDeets = "Latitude: " + loc + ", Longitude: " + loc1;
                     if (marker != null) {
                         marker.remove();
                     }
 
-                    marker = mMap.addMarker(new MarkerOptions().position(nloc).title("Marker in Pakistan").icon(BitmapDescriptorFactory.defaultMarker()));
+                    marker = mMap.addMarker(new MarkerOptions().snippet(locDeets).position(nloc).title("Marker in Pakistan").icon(BitmapDescriptorFactory.defaultMarker()));
                     marker.showInfoWindow();
                     moveToCurrentLocation(nloc, mMap);
                     mMap.setMyLocationEnabled(true);
