@@ -147,6 +147,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
 
         locationListener = new LocationListener() {
@@ -166,6 +167,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     marker = mMap.addMarker(new MarkerOptions().position(nloc).title("Marker in Pakistan").icon(BitmapDescriptorFactory.defaultMarker()));
                     marker.showInfoWindow();
                     moveToCurrentLocation(nloc, mMap);
+                    mMap.setMyLocationEnabled(true);
 
                     zoomOut.setOnClickListener(new View.OnClickListener() {
                         @Override
