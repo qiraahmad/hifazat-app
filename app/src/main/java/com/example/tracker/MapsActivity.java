@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,14 +17,17 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.location.LocationListener;
+import android.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -33,16 +37,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Objects;
 
 
-public class MapsActivity extends Fragment {
+public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
-    MapView mMapView;
     Button logout;
     Button zoomIn;
     Button zoomOut;
     Button sms;
     private GoogleMap googleMap;
-    private LocationListener locationListener;
-    /**
+
+    private LocationListener locationListener;    /**
      * checks if location is changed or not
      */
     private LocationManager locationManager;
@@ -57,13 +60,13 @@ public class MapsActivity extends Fragment {
     /**
      * 5 meters
      */
-    private LatLng latLng;
-    FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+
     Marker marker = null;
-    private static final int SMS_PERMISSION_CODE = 0;
     String SMS_SENT = "SMS_SENT";
     String SMS_DELIVERED = "SMS_DELIVERED";
+
+    private GoogleMap mMap;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,8 +74,8 @@ public class MapsActivity extends Fragment {
 
         PendingIntent sentPendingIntent;
         PendingIntent deliveredPendingIntent;
-
-        mMapView = (MapView) rootView.findViewById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         logout = (Button) rootView.findViewById(R.id.button1);
         zoomIn = (Button) rootView.findViewById(R.id.button2);
         zoomOut = (Button) rootView.findViewById(R.id.button3);
@@ -85,33 +88,17 @@ public class MapsActivity extends Fragment {
                 Objects.requireNonNull(getActivity()).startActivity(i);
             }
         });
-        zoomIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-            }
-        });
-        zoomOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.animateCamera(CameraUpdateFactory.zoomOut());
-            }
-        });
+
+
         sms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+
                         SendSMS();
-                    }
-                } else {
-                    requestPermissions(new String[]{Manifest.permission.SEND_SMS}, 1);
-                }
+
             }
         });
-        mMapView.onCreate(savedInstanceState);
 
-        mMapView.onResume(); // needed to get the map to display immediately
 
         try {
             MapsInitializer.initialize(Objects.requireNonNull(getActivity()).getApplicationContext());
@@ -119,41 +106,19 @@ public class MapsActivity extends Fragment {
             e.printStackTrace();
         }
 
-        sentPendingIntent = PendingIntent.getBroadcast(getContext(), 0, new Intent(SMS_SENT), 0);
-        deliveredPendingIntent = PendingIntent.getBroadcast(getContext(), 0, new Intent(SMS_DELIVERED), 0);
+        /**
+         * checking if permissions have been granted
+         */
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.SEND_SMS}, PackageManager.PERMISSION_GRANTED);
 
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
-                /**
-                 * checking if permissions have been granted
-                 */
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.SEND_SMS}, 1);
 
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                googleMap.setMyLocationEnabled(true);
-                // For dropping a marker at a point on the Map
-                LatLng currlocation = new LatLng(31.433961, 74.258352);
-                googleMap.addMarker(new MarkerOptions().position(currlocation).title("Marker in Pakistan").snippet(currlocation.toString()));
-                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(currlocation).zoom(12).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        });
+        sentPendingIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(SMS_SENT), 0);
+        deliveredPendingIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(SMS_DELIVERED), 0);
         return rootView;
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void SendSMS() {
@@ -169,6 +134,9 @@ public class MapsActivity extends Fragment {
 
     }
 
+
+
+
     private void moveToCurrentLocation(LatLng currentLocation, GoogleMap googleMap) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
         // Zoom in, animating the camera.
@@ -176,28 +144,60 @@ public class MapsActivity extends Fragment {
         // Zoom out to zoom level 10, animating with a duration of 2 seconds.
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMapView.onResume();
-    }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mMapView.onPause();
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        locationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                try {
+                    // Add a marker in Sydney and move the camera
+                    double loc = location.getLatitude();
+                    double loc1 = location.getLongitude();
+                    LatLng nloc = new LatLng(loc, loc1);
+
+                    if (marker != null) {
+                        marker.remove();
+                    }
+
+                    marker = mMap.addMarker(new MarkerOptions().position(nloc).title("Marker in Pakistan").icon(BitmapDescriptorFactory.defaultMarker()));
+                    marker.showInfoWindow();
+                    moveToCurrentLocation(nloc, mMap);
+
+                    zoomOut.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mMap.animateCamera(CameraUpdateFactory.zoomOut());
+
+                        }
+                    });
+                    zoomIn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mMap.animateCamera(CameraUpdateFactory.zoomIn());
+
+                        }
+                    });
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        };
+
+        locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+
+        try { /** check if permissions have been granted */
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Min_time, Min_distance, locationListener);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mMapView.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mMapView.onLowMemory();
-    }
 }
 
