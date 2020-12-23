@@ -2,7 +2,10 @@ package com.example.tracker;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+    int button_count=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,4 +52,26 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         };
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) { //checks if volume down has been pressed 4 times to initiate sending emergency message to contacts
+            button_count++;
+            if (button_count==4) {
+                String no = "+923371424828";
+                String msg = "Whassappp";
+                try {
+                    SmsManager smgr = SmsManager.getDefault();
+                    smgr.sendTextMessage(no, null, msg, null, null);
+                    Toast.makeText(this, "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(this, "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
+                }
+                button_count=0;
+            }
+
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
 }

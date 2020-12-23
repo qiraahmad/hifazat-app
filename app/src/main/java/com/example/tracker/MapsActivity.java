@@ -43,6 +43,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     Button zoomIn;
     Button zoomOut;
     Button sms;
+    LatLng nloc;
     private GoogleMap googleMap;
 
     private LocationListener locationListener;    /**
@@ -90,15 +91,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         });
 
 
-        sms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                        SendSMS();
-
-            }
-        });
-
 
         try {
             MapsInitializer.initialize(Objects.requireNonNull(getActivity()).getApplicationContext());
@@ -123,7 +115,9 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void SendSMS() {
         String no = "+923371424828";
-        String msg = "Whassappp";
+        String lat = Double.toString(nloc.latitude);
+        String lng = Double.toString(nloc.longitude);
+        String msg = "HELP REQUIRED URGENTLY AT MAP LOCATION: " + "http://www.google.com/maps/place/" + lat + "," + lng;
         try {
             SmsManager smgr = SmsManager.getDefault();
             smgr.sendTextMessage(no, null, msg, null, null);
@@ -158,7 +152,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     // Add a marker in Sydney and move the camera
                     double loc = location.getLatitude();
                     double loc1 = location.getLongitude();
-                    LatLng nloc = new LatLng(loc, loc1);
+                    nloc = new LatLng(loc, loc1);
 
                     if (marker != null) {
                         marker.remove();
@@ -168,6 +162,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     marker.showInfoWindow();
                     moveToCurrentLocation(nloc, mMap);
                     mMap.setMyLocationEnabled(true);
+
+
+                    sms.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            SendSMS();
+
+                        }
+                    });
+
 
                     zoomOut.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -200,6 +205,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         }
 
     }
+
+
 
 }
 
