@@ -19,7 +19,7 @@ public class directory extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.directory, container, false);
         listView = (ListView) v.findViewById(R.id.contacts);
-        ContactAdapter customAdapter = new ContactAdapter(getContext(), contacts, numbers);
+        DirectoryContactAdapter customAdapter = new DirectoryContactAdapter(getContext(), contacts, numbers);
         listView.setAdapter(customAdapter);
         return v;
     }

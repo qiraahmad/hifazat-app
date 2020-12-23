@@ -17,13 +17,13 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class ContactAdapter extends BaseAdapter {
+public class DirectoryContactAdapter extends BaseAdapter {
     Context context;
     String title[];
     String contact_no[];
     LayoutInflater inflater;
 
-    public ContactAdapter(Context context, String[] title, String contact_no[]) {
+    public DirectoryContactAdapter(Context context, String[] title, String contact_no[]) {
         this.context = context;
         this.title = title;
         this.contact_no = contact_no;
