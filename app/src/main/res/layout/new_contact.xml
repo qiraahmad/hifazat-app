@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/new_contact_frag">
+    <TextView
+        android:id="@+id/name_field"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="230dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="20sp"
+        android:gravity="end"
+        android:text="Name:"/>
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="220dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Enter Name"
+        android:inputType="textPersonName"
+        android:layout_toEndOf="@id/name_field"/>
+    <TextView
+        android:id="@+id/rel_field"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Relation:"
+        android:gravity="end"
+        android:textSize="20sp"
+        android:layout_below="@+id/name_field"/>
+
+    <EditText
+        android:id="@+id/edit_rel"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_name"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Enter Relation"
+        android:inputType="text"/>
+
+    <TextView
+        android:id="@+id/phone_field"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Phone Number:"
+        android:gravity="end"
+        android:textSize="20sp"
+        android:layout_below="@+id/rel_field"/>
+    <EditText
+        android:id="@+id/edit_num"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_rel"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Enter Phone Number"
+        android:inputType="phone" />
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_num"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="100dp"
+        android:text="Confirm"/>
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_num"
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="100dp"
+        android:text="Cancel"
+        android:backgroundTint="#ADADAD"/>
+
+</RelativeLayout>
