@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new emergency_conts(item.get(0), item.get(1))).commit();
         });
+        viewModel.getDelContact1().observe(this, item ->{
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new emergency_conts(item, false)).commit();
+        });
     }
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {

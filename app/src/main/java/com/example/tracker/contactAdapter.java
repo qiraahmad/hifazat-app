@@ -18,10 +18,11 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactV
 
     public interface adapterInterface {
         void toFragComm(contact c1);
+        void toFragCommDel(contact c1);
     }
-
-    public contactAdapter(ArrayList<contact> exampleList) {
-        mContacts = exampleList;
+    public contactAdapter()
+    {
+        mContacts = new ArrayList<>();
     }
     public contactAdapter(ArrayList<contact> exampleList, adapterInterface i) {
         mContacts = exampleList;
@@ -57,7 +58,7 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactV
     public void onBindViewHolder(contactViewHolder holder, int position) {
         contact currentItem = mContacts.get(position);
         holder.mNameView.setText(currentItem.getName());
-        holder.mPhoneView.setText(currentItem.getPhone());
+        holder.mPhoneView.setText(currentItem.getMobile());
         holder.mRelationView.setText(currentItem.getRelation());
         holder.mInitialsThumb.setText(currentItem.getInitials());
         holder.mDeleteContact.setOnClickListener(new View.OnClickListener() {
@@ -71,8 +72,7 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactV
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                mContacts.remove(currentItem);
-                                contactAdapter.this.notifyDataSetChanged();
+                                mAdapInt.toFragCommDel(currentItem);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {

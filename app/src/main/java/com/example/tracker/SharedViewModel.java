@@ -10,6 +10,7 @@ public class SharedViewModel extends ViewModel {
     private MutableLiveData<String> text = new MutableLiveData<>();
     private MutableLiveData<contact> new_contact = new MutableLiveData<>();
     private MutableLiveData<contact> edit_contact = new MutableLiveData<>();
+    private MutableLiveData<contact> del_contact = new MutableLiveData<>();
     private MutableLiveData<ArrayList<contact>> edit_contacts= new MutableLiveData<>();
 
     public void setText(String input) { text.setValue(input); }
@@ -27,6 +28,10 @@ public class SharedViewModel extends ViewModel {
     public void setEditContact1(contact c1) { edit_contact.setValue(c1); }
 
     public LiveData<contact> getEditContact1() { return edit_contact; }
+
+    public void setDelContact1(contact c1) { del_contact.setValue(c1); }
+
+    public LiveData<contact> getDelContact1() { return del_contact; }
 
     public void setEditContact(contact c1, contact c2) {
         ArrayList<contact> temp1 = new ArrayList<>();
