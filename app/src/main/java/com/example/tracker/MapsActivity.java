@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -39,9 +40,8 @@ import java.util.Objects;
 
 public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
-    Button logout;
-    Button zoomIn;
-    Button zoomOut;
+    ImageButton zoomIn;
+    ImageButton zoomOut;
     Button sms;
     LatLng nloc;
     private GoogleMap googleMap;
@@ -77,19 +77,9 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
         PendingIntent deliveredPendingIntent;
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        logout = (Button) rootView.findViewById(R.id.button1);
-        zoomIn = (Button) rootView.findViewById(R.id.button2);
-        zoomOut = (Button) rootView.findViewById(R.id.button3);
+        zoomIn = (ImageButton) rootView.findViewById(R.id.button3);
+        zoomOut = (ImageButton) rootView.findViewById(R.id.button2);
         sms = (Button) rootView.findViewById(R.id.button4);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent i = new Intent(getActivity(), SignUpActivity.class);
-                Objects.requireNonNull(getActivity()).startActivity(i);
-            }
-        });
-
 
 
         try {
@@ -122,9 +112,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
             SmsManager smgr = SmsManager.getDefault();
             smgr.sendTextMessage(no, null, msg, null, null);
             Toast.makeText(getActivity(), "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
+
         } catch (Exception e) {
             Toast.makeText(getActivity(), "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
         }
+
+
 
     }
 
@@ -153,12 +146,13 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     double loc = location.getLatitude();
                     double loc1 = location.getLongitude();
                     nloc = new LatLng(loc, loc1);
+                    String locDeets = "Latitude: " + loc + ", Longitude: " + loc1;
 
                     if (marker != null) {
                         marker.remove();
                     }
 
-                    marker = mMap.addMarker(new MarkerOptions().position(nloc).title("Marker in Pakistan").icon(BitmapDescriptorFactory.defaultMarker()));
+                    marker = mMap.addMarker(new MarkerOptions().snippet(locDeets).position(nloc).title("Marker in Pakistan").icon(BitmapDescriptorFactory.defaultMarker()));
                     marker.showInfoWindow();
                     moveToCurrentLocation(nloc, mMap);
                     mMap.setMyLocationEnabled(true);

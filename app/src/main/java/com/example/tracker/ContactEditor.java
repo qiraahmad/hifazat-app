@@ -12,10 +12,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class ContactEditor extends Fragment {
     private SharedViewModel viewModel;
     contact editContact;
     boolean editOrNew;
+    FirebaseUser firebaseUser;
+
     ContactEditor(contact c1)
     {
         editContact = c1;
@@ -34,15 +39,17 @@ public class ContactEditor extends Fragment {
         EditText mNameView = temp.findViewById(R.id.edit_name);
         EditText mPhoneView = temp.findViewById(R.id.edit_num);
         EditText mRelationView = temp.findViewById(R.id.edit_rel);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String email = firebaseUser.getEmail();
         if(editOrNew)
         {
             mNameView.setText(editContact.getName());
-            mPhoneView.setText(editContact.getPhone());
+            mPhoneView.setText(editContact.getMobile());
             mRelationView.setText(editContact.getRelation());
         }
         contact orig = new contact(mNameView.getText().toString(),
                 mRelationView.getText().toString(),
-                mPhoneView.getText().toString());
+                mPhoneView.getText().toString(), email);
         viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +57,7 @@ public class ContactEditor extends Fragment {
                 contact edited;
                 edited = new contact(mNameView.getText().toString(),
                         mRelationView.getText().toString(),
-                        mPhoneView.getText().toString());
+                        mPhoneView.getText().toString(), email);
                 if(edited.getName().isEmpty())
                 {
                     mNameView.setError("Name field is Empty");
@@ -61,7 +68,7 @@ public class ContactEditor extends Fragment {
                     mRelationView.setError("Relation field is Empty");
                     mRelationView.requestFocus();
                 }
-                else if(edited.getPhone().isEmpty())
+                else if(edited.getMobile().isEmpty())
                 {
                     mPhoneView.setError("Phone field is Empty");
                     mPhoneView.requestFocus();

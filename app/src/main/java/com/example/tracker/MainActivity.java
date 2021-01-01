@@ -1,9 +1,11 @@
 package com.example.tracker;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     private SharedViewModel viewModel;
@@ -28,30 +31,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new MapsActivity()).commit();
         }
-        viewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-        viewModel.getText().observe(this, item -> {
-            if (item.equals("new_cont")) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ContactEditor()).commit();
-            }
-            else if(item.equals("cancel")) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new emergency_conts()).commit();
-            }
-        });
-        viewModel.getContact().observe(this, item ->{
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new emergency_conts(item)).commit();
-        });
-        viewModel.getEditContact1().observe(this, item ->
-        {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ContactEditor(item)).commit();
-        });
-        viewModel.getEditContact().observe(this, item ->{
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new emergency_conts(item.get(0), item.get(1))).commit();
-        });
+
     }
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -99,5 +79,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent i = new Intent( MainActivity.this, SignUpActivity.class);
+                startActivity(i);
+                return true;
+
+        }
+        return false;
     }
 }
