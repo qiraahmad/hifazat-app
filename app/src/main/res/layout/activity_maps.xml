@@ -16,24 +16,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true">
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Log Out"
-            android:layout_margin="1dp"/>
-        <Button
+
+        <ImageButton
+            android:layout_width="55dp"
             android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Zoom In"
-            android:layout_margin="1dp"/>
-        <Button
+            android:layout_height="55dp"
+            android:src="@drawable/ic_baseline_zoom_out_24"/>
+
+        <ImageButton
+            android:layout_width="55dp"
             android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Zoom Out"
-            android:layout_margin="1dp"/>
+            android:layout_height="55dp"
+            android:src="@drawable/ic_baseline_zoom_in_24"/>
         <Button
             android:id="@+id/button4"
             android:layout_width="wrap_content"

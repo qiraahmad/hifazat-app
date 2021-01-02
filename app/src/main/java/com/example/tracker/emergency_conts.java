@@ -1,10 +1,12 @@
 package com.example.tracker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,9 +15,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class emergency_conts extends Fragment implements contactAdapter.adapterInterface{
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class emergency_conts extends Fragment {
     private RecyclerView currRecyclerView;
     private ArrayList<contact> contactList = new ArrayList<>();
     private RecyclerView.Adapter currAdapter;
@@ -23,31 +37,23 @@ public class emergency_conts extends Fragment implements contactAdapter.adapterI
     private RecyclerView.LayoutManager currLayoutManager;
     private SharedViewModel viewModel;
     private boolean edit;
+    DatabaseReference reference;
+    FirebaseUser firebaseUser;
+    String a;
+    String b;
+    String c;
+
 
     emergency_conts() {
-        contactList.add(new contact("Sarosh Humayun", "Brother", "0324138971"));
-        contactList.add(new contact("Qira Ahmad", "Sister", "03244297873"));
-        contactList.add(new contact("Shankar Yadav", "Brother", "0323298473"));
-        contactList.add(new contact("Babli Bhai", "Father", "03232883838"));
-
-        currLayoutManager = new LinearLayoutManager(getContext());
-        currAdapter = new contactAdapter(contactList, this);
     }
 
     emergency_conts(contact x) {
         contactList.add(x);
-        contactList.add(new contact("Sarosh Humayun", "Brother", "0324138971"));
-        contactList.add(new contact("Qira Ahmad", "Sister", "03244297873"));
-        contactList.add(new contact("Shankar Yadav", "Brother", "0323298473"));
-        contactList.add(new contact("Babli Bhai", "Father", "03232883838"));
         currLayoutManager = new LinearLayoutManager(getContext());
         currAdapter = new contactAdapter(contactList);
     }
     emergency_conts(contact old, contact new_cont) {
-        contactList.add(new contact("Sarosh Humayun", "Brother", "0324138971"));
-        contactList.add(new contact("Qira Ahmad", "Sister", "03244297873"));
-        contactList.add(new contact("Shankar Yadav", "Brother", "0323298473"));
-        contactList.add(new contact("Babli Bhai", "Father", "03232883838"));
+
         int x = contactList.indexOf(old);
         contactList.set(contactList.indexOf(old),new_cont);
         currLayoutManager = new LinearLayoutManager(getContext());
@@ -60,10 +66,44 @@ public class emergency_conts extends Fragment implements contactAdapter.adapterI
         View thisView = inflater.inflate(R.layout.emergency_conts, container, false);
 
         currRecyclerView = thisView.findViewById(R.id.ecRecycler);
-        currRecyclerView.setHasFixedSize(true);
 
-        currRecyclerView.setLayoutManager(currLayoutManager);
-        currRecyclerView.setAdapter(currAdapter);
+        currRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+        reference = FirebaseDatabase.getInstance().getReference("Contacts");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                contactList.clear();
+
+                for (DataSnapshot snapshot1: snapshot.getChildren()){
+                    contact m = snapshot1.getValue(contact.class);
+
+                    a= m.getName();
+                    b = m.getMobile();
+                    c = m.getRelation();
+                    String d = m.getUser_id();
+                    if(d.equals(firebaseUser.getEmail())) {
+                        contactList.add(m);
+                        reference.keepSynced(true);
+                    }
+
+                    if (contactList.size()>0) {
+                        currAdapter = new contactAdapter(getContext(), contactList);
+                        currRecyclerView.setAdapter(currAdapter);
+                    }
+                    reference.keepSynced(true);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         currNewContact = thisView.findViewById(R.id.add_new_ec);
 
@@ -71,15 +111,12 @@ public class emergency_conts extends Fragment implements contactAdapter.adapterI
         currNewContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewModel.setText("new_cont");
+                //viewModel.setText("new_cont") ;
+                Intent activity2Intent = new Intent(getContext(), AddContact.class);
+                startActivity(activity2Intent);
             }
         });
         return thisView;
     }
 
-    @Override
-    public void toFragComm(contact c1) {
-        viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        viewModel.setEditContact1(c1);
-    }
 }

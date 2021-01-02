@@ -1,6 +1,7 @@
 package com.example.tracker;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,23 +12,29 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactViewHolder> {
-    private ArrayList<contact> mContacts;
     public adapterInterface mAdapInt;
+    private List<contact> users;
+    private Context mContext;
 
     public interface adapterInterface {
         void toFragComm(contact c1);
     }
 
     public contactAdapter(ArrayList<contact> exampleList) {
-        mContacts = exampleList;
+        users = exampleList;
     }
     public contactAdapter(ArrayList<contact> exampleList, adapterInterface i) {
-        mContacts = exampleList;
+        users = exampleList;
         mAdapInt = i;
     }
 
+    public contactAdapter(Context mContext, List<contact> users) {
+        this.mContext = mContext;
+        this.users = users;
+    }
     public static class contactViewHolder extends RecyclerView.ViewHolder {
         public TextView mInitialsThumb;
         public TextView mNameView;
@@ -49,15 +56,15 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactV
 
     @Override
     public contactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sample_ec_item, parent, false);
-        return new contactViewHolder(v);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.sample_ec_item, parent, false);
+        return new contactAdapter.contactViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(contactViewHolder holder, int position) {
-        contact currentItem = mContacts.get(position);
+        contact currentItem = users.get(position);
         holder.mNameView.setText(currentItem.getName());
-        holder.mPhoneView.setText(currentItem.getPhone());
+        holder.mPhoneView.setText(currentItem.getMobile());
         holder.mRelationView.setText(currentItem.getRelation());
         holder.mInitialsThumb.setText(currentItem.getInitials());
         holder.mDeleteContact.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +78,7 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactV
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                mContacts.remove(currentItem);
+                                users.remove(currentItem);
                                 contactAdapter.this.notifyDataSetChanged();
                             }
                         })
@@ -94,6 +101,6 @@ public class contactAdapter extends RecyclerView.Adapter<contactAdapter.contactV
 
     @Override
     public int getItemCount() {
-        return mContacts.size();
+        return users.size();
     }
 }
