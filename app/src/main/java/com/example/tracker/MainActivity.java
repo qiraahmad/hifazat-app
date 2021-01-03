@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 contact m = snapshot1.getValue(contact.class);
                                 String phone = m.getMobile();
+                                phone = phone.replaceFirst("0", "+92");
                                 String Uid = m.getUser_id();
                                 if (Uid.equals(firebaseUser.getEmail())) {
                                     try {
@@ -195,6 +197,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent i = new Intent( MainActivity.this, SignUpActivity.class);
+                startActivity(i);
+                return true;
+
+        }
+        return false;
     }
 
 

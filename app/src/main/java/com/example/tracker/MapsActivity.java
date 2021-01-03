@@ -123,6 +123,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     contact m = snapshot1.getValue(contact.class);
                     String phone = m.getMobile();
+                    phone = phone.replaceFirst("0", "+92");
                     String Uid = m.getUser_id();
                     String lat = Double.toString(nloc.latitude);
                     String lng = Double.toString(nloc.longitude);
