@@ -10,4 +10,13 @@
         android:id="@+id/record"
         android:text="Record"
         android:layout_centerInParent="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/BtnFakeCall"
+        android:text="Fake Call Generator"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="100dp"
+        />
 </RelativeLayout>

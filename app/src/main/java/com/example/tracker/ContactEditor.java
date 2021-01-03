@@ -19,8 +19,7 @@ public class ContactEditor extends Fragment {
     private SharedViewModel viewModel;
     contact editContact;
     boolean editOrNew;
-    FirebaseUser firebaseUser;
-
+    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     ContactEditor(contact c1)
     {
         editContact = c1;
@@ -39,8 +38,6 @@ public class ContactEditor extends Fragment {
         EditText mNameView = temp.findViewById(R.id.edit_name);
         EditText mPhoneView = temp.findViewById(R.id.edit_num);
         EditText mRelationView = temp.findViewById(R.id.edit_rel);
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String email = firebaseUser.getEmail();
         if(editOrNew)
         {
             mNameView.setText(editContact.getName());
@@ -49,7 +46,8 @@ public class ContactEditor extends Fragment {
         }
         contact orig = new contact(mNameView.getText().toString(),
                 mRelationView.getText().toString(),
-                mPhoneView.getText().toString(), email);
+                mPhoneView.getText().toString(),
+                firebaseUser.getEmail());
         viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +55,8 @@ public class ContactEditor extends Fragment {
                 contact edited;
                 edited = new contact(mNameView.getText().toString(),
                         mRelationView.getText().toString(),
-                        mPhoneView.getText().toString(), email);
+                        mPhoneView.getText().toString(),
+                        firebaseUser.getEmail());
                 if(edited.getName().isEmpty())
                 {
                     mNameView.setError("Name field is Empty");

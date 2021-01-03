@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -33,8 +34,18 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 
@@ -45,6 +56,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
     Button sms;
     LatLng nloc;
     private GoogleMap googleMap;
+    private DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Contacts");
+    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     private LocationListener locationListener;    /**
      * checks if location is changed or not
@@ -104,18 +117,38 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void SendSMS() {
-        String no = "+923371424828";
-        String lat = Double.toString(nloc.latitude);
-        String lng = Double.toString(nloc.longitude);
-        String msg = "HELP REQUIRED URGENTLY AT MAP LOCATION: " + "http://www.google.com/maps/place/" + lat + "," + lng;
-        try {
-            SmsManager smgr = SmsManager.getDefault();
-            smgr.sendTextMessage(no, null, msg, null, null);
-            Toast.makeText(getActivity(), "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    contact m = snapshot1.getValue(contact.class);
+                    String phone = m.getMobile();
+                    String Uid = m.getUser_id();
+                    String lat = Double.toString(nloc.latitude);
+                    String lng = Double.toString(nloc.longitude);
 
-        } catch (Exception e) {
-            Toast.makeText(getActivity(), "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
-        }
+                    String msg = "HELP REQUIRED URGENTLY AT MAP LOCATION: " + "http://www.google.com/maps/place/" + lat + "," + lng;
+                    if (Uid.equals(firebaseUser.getEmail())) {
+                        try {
+                            SmsManager smgr = SmsManager.getDefault();
+                            smgr.sendTextMessage(phone, null, msg, null, null);
+                            Toast.makeText(getActivity(), "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        reference.keepSynced(true);
+                    }
+                    reference.keepSynced(true);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
 
 
@@ -146,6 +179,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     double loc = location.getLatitude();
                     double loc1 = location.getLongitude();
                     nloc = new LatLng(loc, loc1);
+
+
+                    //Intent intent = new Intent(getActivity(), MainActivity.class);
+                    //intent.putExtra("lat",loc);
+                    //intent.putExtra("lng", loc1);
+                    //startActivity(intent);
                     String locDeets = "Latitude: " + loc + ", Longitude: " + loc1;
 
                     if (marker != null) {
@@ -156,6 +195,23 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback {
                     marker.showInfoWindow();
                     moveToCurrentLocation(nloc, mMap);
                     mMap.setMyLocationEnabled(true);
+
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("lat", Double.toString(loc));
+                    hashMap.put("lng", Double.toString(loc1));
+                    hashMap.put("user_id", firebaseUser.getEmail());
+                    DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Locations");
+                    ref.push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                            }
+                            else {
+                                Toast.makeText(getContext(), "An error occurred, try again!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    reference.keepSynced(true);
 
 
                     sms.setOnClickListener(new View.OnClickListener() {
